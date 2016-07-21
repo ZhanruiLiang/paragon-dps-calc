@@ -1,6 +1,6 @@
 'use strcit';
 
-let app = angular.module('paragon-dps-calc', ['nvd3']);
+var app = angular.module('paragon-dps-calc', ['nvd3']);
 
 app.controller('Ctrl', function() {
   this.heros = HEROS;
@@ -59,7 +59,7 @@ app.controller('Ctrl', function() {
   
   this.findOptimal = function() {
     this.update(false);
-    let best = solveForOptimal(this.basicStats, this.level, this.totalP - 3 * this.useCritBonus, this.critBonus / 100);
+    var best = solveForOptimal(this.basicStats, this.level, this.totalP - 3 * this.useCritBonus, this.critBonus / 100);
     this.damageP = best.damageP;
     this.attackSpeedP = best.attackSpeedP;
     this.critChanceP = best.critChanceP;
@@ -67,9 +67,9 @@ app.controller('Ctrl', function() {
   }.bind(this);
   
   this.calcGraphData = function() {
-    let crit = {key: 'Optimal DPS(+50% Crit Bonus)', values: []};
-    let noCrit = {key: 'Optimal DPS', values: []};
-    for (let totalP = 0; totalP <= 60; totalP++) {
+    var crit = {key: 'Optimal DPS(+50% Crit Bonus)', values: []};
+    var noCrit = {key: 'Optimal DPS', values: []};
+    for (var totalP = 0; totalP <= 60; totalP++) {
       if (totalP >= 3) {
         crit.values.push({
           x: totalP,
@@ -88,11 +88,11 @@ app.controller('Ctrl', function() {
 });
 
 function solveForOptimal(basicStats, level, totalP, critBonus) {
-  let best = null;
-  for (let d = 0; d <= totalP; d++) {
-    for (let a = 0; a + d <= totalP; a++) {
-      let c = totalP - d - a;
-      let dps = calcDps(basicStats.initialCooldown,
+  var best = null;
+  for (var d = 0; d <= totalP; d++) {
+    for (var a = 0; a + d <= totalP; a++) {
+      var c = totalP - d - a;
+      var dps = calcDps(basicStats.initialCooldown,
         calcDamage(basicStats, level, d),
         calcAttackSpeed(basicStats, level, a),
         calcCritChance(basicStats, level, c),
@@ -119,6 +119,6 @@ function calcCritChance(basicStats, level, critChanceP) {
 }
 
 function calcDps(initialCooldown, damage, attackSpeed, critChance, critBonus) {
-  let hitPerSec = attackSpeed / 100 / initialCooldown;
+  var hitPerSec = attackSpeed / 100 / initialCooldown;
   return damage * hitPerSec * (1 + critChance * (critBonus - 1)); 
 }
