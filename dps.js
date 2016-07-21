@@ -48,7 +48,7 @@ app.controller('Ctrl', function() {
     if (!this.basicStats || this.heroName != this.basicStats.name) {
       this.basicStats = angular.copy(this.heros.filter(function(h) {
         return h.name == this.heroName;
-      })[0]);
+      }.bind(this))[0]);
     }
     this.damage = calcDamage(this.basicStats, this.level, this.damageP);
     this.attackSpeed = calcAttackSpeed(this.basicStats, this.level, this.attackSpeedP);
