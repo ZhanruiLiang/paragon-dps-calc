@@ -1,0 +1,13 @@
+h3 {
+  margin-top: 20px;
+  color: #378;
+  font-size: 120%;
+}
+body {
+  font-size: 70%;
+  font-family: Georgia, serif;
+}
+
+input[type="number"] {
+  width: 8ex;
+}
