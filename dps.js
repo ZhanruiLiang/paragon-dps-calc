@@ -5,7 +5,7 @@ let app = angular.module('paragon-dps-calc', ['nvd3']);
 app.controller('Ctrl', function() {
   this.heros = HEROS;
   this.heroName = HEROS[0].name;
-  this.basicStats = {};
+  this.basicStats = null;
   
   this.level = 15;
   this.useCritBonus = false;
@@ -45,7 +45,9 @@ app.controller('Ctrl', function() {
         this.damageP + this.attackSpeedP + this.critChanceP + 3 * this.useCritBonus);
     }
     this.critBonus = 200 + 50 * this.useCritBonus;
-    this.basicStats = angular.copy(this.heros.filter(h => h.name == this.heroName)[0]);
+    if (!this.basicStats || this.heroName != this.basicStats.name) {
+      this.basicStats = angular.copy(this.heros.filter(h => h.name == this.heroName)[0]);
+    }
     this.damage = calcDamage(this.basicStats, this.level, this.damageP);
     this.attackSpeed = calcAttackSpeed(this.basicStats, this.level, this.attackSpeedP);
     this.critChance = calcCritChance(this.basicStats, this.level, this.critChanceP);
@@ -104,7 +106,8 @@ function solveForOptimal(basicStats, level, totalP, critBonus) {
 }
 
 function calcDamage(basicStats, level, damageP) {
-  return basicStats.initialDamage + basicStats.damageLevelGain * (level - 1) + 7.58 * damageP;
+  return (basicStats.initialDamage + basicStats.damageLevelGain * (level - 1)
+          + 7.58 * damageP * basicStats.damageScaling);
 }
 
 function calcAttackSpeed(basicStats, level, attackSpeedP) {
