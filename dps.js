@@ -24,14 +24,14 @@ app.controller('Ctrl', function() {
     chart: {
       type: 'lineChart',
       height: 800,
-      x: d => d.x,
-      y: d => d.y,
+      x: function(d) { return d.x; },
+      y: function(d) { return d.y; },
       useInteractiveGuideline: true,
       xAxis: {
         axisLabel: 'Total Points',
       },
       yAxis: {
-        tickFormat: d => d3.format(',.0f')(d),
+        tickFormat: function(d) { return d3.format(',.0f')(d); },
         axisLabel: 'DPS',
       },
     },
@@ -46,7 +46,9 @@ app.controller('Ctrl', function() {
     }
     this.critBonus = 200 + 50 * this.useCritBonus;
     if (!this.basicStats || this.heroName != this.basicStats.name) {
-      this.basicStats = angular.copy(this.heros.filter(h => h.name == this.heroName)[0]);
+      this.basicStats = angular.copy(this.heros.filter(function(h) {
+        return h.name == this.heroName;
+      })[0]);
     }
     this.damage = calcDamage(this.basicStats, this.level, this.damageP);
     this.attackSpeed = calcAttackSpeed(this.basicStats, this.level, this.attackSpeedP);
