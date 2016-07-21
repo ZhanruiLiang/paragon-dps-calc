@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <title> Paragon DPS Calculator </title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css">
   <link rel="stylesheet" href="style.css">
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.7/angular.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
@@ -12,7 +12,8 @@
   <script type="text/javascript" src="hero.js"></script>
   <script type="text/javascript" src="dps.js"></script>
 </head>
-<body ng-app="paragon-dps-calc">
+<body>
+  <div ng-app="paragon-dps-calc">
   <div class="container-fluid" ng-controller="Ctrl as ctrl">
     <div class="row">
       <div class="col-sm-3">
@@ -75,4 +76,5 @@
       </div> <!-- end of right column -->
     </div> <!-- end of row -->
   </div> <!-- end of container -->
+  </div>
 </body>
