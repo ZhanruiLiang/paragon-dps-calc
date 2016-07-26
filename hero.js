@@ -3,7 +3,7 @@ HEROS = [
     "initialCooldown": 1.6, 
     "name": "Dekker", 
     "damageScaling": 0.4, 
-    "damageLevelGain": 0.0, 
+    "damageLevelGain": 3.0, 
     "attackSpeedLevelGain": 1.4, 
     "initialDamage": 35.0, 
     "initialAttackSpeed": 100
@@ -39,7 +39,7 @@ HEROS = [
     "initialCooldown": 1.55, 
     "name": "Gideon", 
     "damageScaling": 0.4, 
-    "damageLevelGain": 0.0, 
+    "damageLevelGain": 3.0, 
     "attackSpeedLevelGain": 1.4, 
     "initialDamage": 35.0, 
     "initialAttackSpeed": 100
@@ -66,7 +66,7 @@ HEROS = [
     "initialCooldown": 1.55, 
     "name": "Howitzer", 
     "damageScaling": 0.4, 
-    "damageLevelGain": 0.0, 
+    "damageLevelGain": 3.0, 
     "attackSpeedLevelGain": 1.4, 
     "initialDamage": 35.0, 
     "initialAttackSpeed": 100
@@ -75,7 +75,7 @@ HEROS = [
     "initialCooldown": 1.7, 
     "name": "Iggy & Scorch", 
     "damageScaling": 0.4, 
-    "damageLevelGain": 0.0, 
+    "damageLevelGain": 3.0, 
     "attackSpeedLevelGain": 0.0, 
     "initialDamage": 35.0, 
     "initialAttackSpeed": 100
@@ -110,8 +110,8 @@ HEROS = [
   {
     "initialCooldown": 1.7, 
     "name": "Muriel", 
-    "damageScaling": 0.7, 
-    "damageLevelGain": 0.0, 
+    "damageScaling": 0.4, 
+    "damageLevelGain": 3.0, 
     "attackSpeedLevelGain": 1.4, 
     "initialDamage": 35.0, 
     "initialAttackSpeed": 100
