@@ -2,13 +2,33 @@
 
 var app = angular.module('paragon-dps-calc', ['nvd3']);
 
+GENERAL_STATS_PRESETS = [
+  {
+    name: 'v28',
+    damagePerPoint: 7.6,
+    attackSpeedPerPoint: 6.5,
+    critChancePerPoint: 0.03,
+    initialCritBonus: 1.5,
+  },
+  {
+    name: 'v29',
+    damagePerPoint: 6.5,
+    attackSpeedPerPoint: 5.5,
+    critChancePerPoint: 0.03,
+    initialCritBonus: 1.5,
+  },
+]
+
 app.controller('Ctrl', function() {
   this.heros = HEROS;
   this.heroName = HEROS[0].name;
-  this.basicStats = null;
+  this.generalPresets = GENERAL_STATS_PRESETS;
+  this.generalPresetName = GENERAL_STATS_PRESETS[0].name;
+  this.generalStats = null;
+  this.heroStats = null;
   
   this.level = 15;
-  this.useCritBonus = false;
+  this.extraCritBonus = false;
   this.damageP = 24;
   this.attackSpeedP = 14;
   this.critChanceP = 8;
@@ -17,7 +37,7 @@ app.controller('Ctrl', function() {
   this.damage = 0;
   this.attackSpeed = 0;
   this.critChance = 0;
-  this.critBonus = 200;
+  this.critBonus = 0;
   this.dps = 0;
   
   this.graphOptions = {
@@ -39,29 +59,40 @@ app.controller('Ctrl', function() {
   this.graphData = [];
   
   this.update = function(updateTotal) {
-    updateTotal = updateTotal == null ? true : updateTotal;
-    if (updateTotal) {
-      this.totalP = (
-        this.damageP + this.attackSpeedP + this.critChanceP + 3 * this.useCritBonus);
-    }
-    this.critBonus = 200 + 50 * this.useCritBonus;
-    if (!this.basicStats || this.heroName != this.basicStats.name) {
-      this.basicStats = angular.copy(this.heros.filter(function(h) {
+    if (!this.heroStats || this.heroName != this.heroStats.name) {
+      this.heroStats = angular.copy(this.heros.filter(function(h) {
         return h.name == this.heroName;
       }.bind(this))[0]);
     }
-    this.damage = calcDamage(this.basicStats, this.level, this.damageP);
-    this.attackSpeed = calcAttackSpeed(this.basicStats, this.level, this.attackSpeedP);
-    this.critChance = calcCritChance(this.basicStats, this.level, this.critChanceP);
+    if (!this.generalStats || this.generalPresetName != this.generalStats.name) {
+      this.generalStats = angular.copy(this.generalPresets.filter(function(g) {
+        return g.name == this.generalPresetName;
+      }.bind(this))[0]);
+    }
+    updateTotal = updateTotal == null ? true : updateTotal;
+    if (updateTotal) {
+      this.totalP = (
+        this.damageP + this.attackSpeedP + this.critChanceP + 3 * this.extraCritBonus);
+    }
+    this.critBonus = this.generalStats.initialCritBonus + 0.5 * this.extraCritBonus;
+    this.damage = calcDamage(
+        this.generalStats, this.heroStats, this.level, this.damageP);
+    this.attackSpeed = calcAttackSpeed(
+        this.generalStats, this.heroStats, this.level, this.attackSpeedP);
+    this.critChance = calcCritChance(
+        this.generalStats, this.heroStats, this.level, this.critChanceP);
     this.dps = calcDps(
-      this.basicStats.initialCooldown, this.damage, this.attackSpeed, this.critChance,
-      this.critBonus / 100);
+      this.heroStats.initialCooldown, this.damage, this.attackSpeed,
+      this.critChance,
+      this.critBonus);
     this.graphData = this.calcGraphData();
   }.bind(this);
   
   this.findOptimal = function() {
     this.update(false);
-    var best = solveForOptimal(this.basicStats, this.level, this.totalP - 3 * this.useCritBonus, this.critBonus / 100);
+    var best = solveForOptimal(
+        this.generalStats, this.heroStats, this.level,
+        this.totalP - 3 * this.extraCritBonus, this.critBonus);
     this.damageP = best.damageP;
     this.attackSpeedP = best.attackSpeedP;
     this.critChanceP = best.critChanceP;
@@ -75,12 +106,16 @@ app.controller('Ctrl', function() {
       if (totalP >= 3) {
         crit.values.push({
           x: totalP,
-          y: solveForOptimal(this.basicStats, this.level, totalP - 3, 2.5).dps
+          y: solveForOptimal(
+              this.generalStats, this.heroStats, this.level,
+              totalP - 3, this.generalStats.initialCritBonus + 0.5).dps
         });
       }
       noCrit.values.push({
         x: totalP,
-        y: solveForOptimal(this.basicStats, this.level, totalP, 2).dps
+        y: solveForOptimal(
+            this.generalStats, this.heroStats, this.level,
+            totalP, this.generalStats.initialCritBonus).dps
       });
     }
     return [crit, noCrit];
@@ -89,15 +124,15 @@ app.controller('Ctrl', function() {
   this.update();
 });
 
-function solveForOptimal(basicStats, level, totalP, critBonus) {
+function solveForOptimal(generalStats, heroStats, level, totalP, critBonus) {
   var best = null;
   for (var d = 0; d <= totalP; d++) {
     for (var a = 0; a + d <= totalP; a++) {
       var c = totalP - d - a;
-      var dps = calcDps(basicStats.initialCooldown,
-        calcDamage(basicStats, level, d),
-        calcAttackSpeed(basicStats, level, a),
-        calcCritChance(basicStats, level, c),
+      var dps = calcDps(heroStats.initialCooldown,
+        calcDamage(generalStats, heroStats, level, d),
+        calcAttackSpeed(generalStats, heroStats, level, a),
+        calcCritChance(generalStats, heroStats, level, c),
         critBonus);
       if (!best || dps > best.dps) {
         best = {damageP: d, attackSpeedP: a, critChanceP: c, dps: dps};
@@ -107,17 +142,21 @@ function solveForOptimal(basicStats, level, totalP, critBonus) {
   return best;
 }
 
-function calcDamage(basicStats, level, damageP) {
-  return (basicStats.initialDamage + basicStats.damageLevelGain * (level - 1)
-          + 7.58 * damageP * basicStats.damageScaling);
+function calcDamage(generalStats, heroStats, level, damageP) {
+  return (
+      heroStats.initialDamage + heroStats.damageLevelGain * (level - 1) +
+      generalStats.damagePerPoint * damageP * heroStats.damageScaling);
 }
 
-function calcAttackSpeed(basicStats, level, attackSpeedP) {
-  return basicStats.initialAttackSpeed + basicStats.attackSpeedLevelGain * (level - 1) + 6.5 * attackSpeedP;
+function calcAttackSpeed(generalStats, heroStats, level, attackSpeedP) {
+  return (
+      heroStats.initialAttackSpeed +
+      heroStats.attackSpeedLevelGain * (level - 1) +
+      generalStats.attackSpeedPerPoint * attackSpeedP);
 }
 
-function calcCritChance(basicStats, level, critChanceP) {
-  return 0.03 * critChanceP;
+function calcCritChance(generalStats, heroStats, level, critChanceP) {
+  return generalStats.critChancePerPoint * critChanceP;
 }
 
 function calcDps(initialCooldown, damage, attackSpeed, critChance, critBonus) {

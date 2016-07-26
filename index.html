@@ -17,36 +17,52 @@
   <div class="container-fluid" ng-controller="Ctrl as ctrl">
     <div class="row">
       <div class="col-sm-3">
-        <h3>Basic Stats</h3>
+        <h3>General Stats</h3>
+        <table class="table table-sm">
+          <tr><th>Damage Per Point</th><td>
+            <input type="number" ng-model="ctrl.generalStats.damagePerPoint"></td></tr>
+          <tr><th>Attack Speed Per Point</th><td>
+            <input type="number" ng-model="ctrl.generalStats.attackSpeedPerPoint"></td></tr>
+          <tr><th>Crit Chance Per Point</th><td>
+            <input type="number" ng-model="ctrl.generalStats.critChancePerPoint"></td></tr>
+          <tr><th>Initial Crit Bonus</th><td>
+            <input type="number" ng-model="ctrl.generalStats.initialCritBonus"></td></tr>
+        </table>
+        <h3>Hero Stats</h3>
         <table class="table table-sm">
           <tr><th>Initial Damage</th><td>
-            <input type="number" ng-model="ctrl.basicStats.initialDamage"></td></tr>
+            <input type="number" ng-model="ctrl.heroStats.initialDamage"></td></tr>
           <tr><th>Initial Attack Speed</th><td>
-            <input type="number" ng-model="ctrl.basicStats.initialAttackSpeed"></td></tr>
+            <input type="number" ng-model="ctrl.heroStats.initialAttackSpeed"></td></tr>
           <tr><th>Damage Level Gain</th><td>
-            <input type="number" ng-model="ctrl.basicStats.damageLevelGain"></td></tr>
+            <input type="number" ng-model="ctrl.heroStats.damageLevelGain"></td></tr>
           <tr><th>Attack Speed Level Gain</th><td>
-            <input type="number" ng-model="ctrl.basicStats.attackSpeedLevelGain"></td></tr>
+            <input type="number" ng-model="ctrl.heroStats.attackSpeedLevelGain"></td></tr>
           <tr><th>Initial Cooldown</th><td>
-            <input type="number" ng-model="ctrl.basicStats.initialCooldown"></td></tr>
+            <input type="number" ng-model="ctrl.heroStats.initialCooldown"></td></tr>
           <tr><th>Basic Attack Scaling</th><td>
-            <input type="number" ng-model="ctrl.basicStats.damageScaling"></td></tr>
+            <input type="number" ng-model="ctrl.heroStats.damageScaling"></td></tr>
         </table>
 
         <h3>Effects</h3>
         <table class="table table-sm">
           <tr><th>Damage</th><td>{{ctrl.damage | number: 2}}</td></tr>
-          <tr><th>Crit Damage</th><td>{{ctrl.critBonus / 100 * ctrl.damage | number: 2}}</td></tr>
+          <tr><th>Crit Damage</th><td>{{ctrl.critBonus * ctrl.damage | number: 2}}</td></tr>
           <tr><th>Attack Speed</th><td>{{ctrl.attackSpeed | number: 2}}</td></tr>
-          <tr><th>Hits/sec</th><td>{{ctrl.attackSpeed / 100 / ctrl.basicStats.initialCooldown | number: 2}}</td></tr>
+          <tr><th>Hits/sec</th><td>{{ctrl.attackSpeed / 100 / ctrl.heroStats.initialCooldown | number: 2}}</td></tr>
           <tr><th>Crit Chance</th><td>{{ctrl.critChance * 100 | number: 0}}%</td></tr>
-          <tr><th>Crit Bonus</th><td>{{ctrl.critBonus | number: 0}}%</td></tr>
+          <tr><th>Crit Bonus</th><td>{{ctrl.critBonus * 100 | number: 0}}%</td></tr>
           <tr><th>DPS</th><td>{{ctrl.dps | number: 0}}</td></tr>
         </table>
 
         <h3>Controls</h3>
         <form>
           <table class="table table-sm">
+            <tr><th>General Preset</th><td>
+            <select ng-model="ctrl.generalPresetName">
+              <option ng-repeat="g in ctrl.generalPresets" value="{{g.name}}">{{g.name}}</option>
+            </select>
+            </td></tr>
             <tr><th>Hero</th><td>
             <select ng-model="ctrl.heroName">
               <option ng-repeat="hero in ctrl.heros" value="{{hero.name}}">{{hero.name}}</option>
@@ -54,7 +70,7 @@
             </td></tr>
             <tr><th>Level</th><td><input type="number" ng-model="ctrl.level"></td></tr>
             <tr><th>+50% Crit Bonus</th><td>
-              <input type="checkbox" ng-model="ctrl.useCritBonus" ng-true-value="true" ng-false-value="false"></td></tr>
+              <input type="checkbox" ng-model="ctrl.extraCritBonus" ng-true-value="true" ng-false-value="false"></td></tr>
             <tr><th>Damage Points</th><td>
               <input type="number" ng-model="ctrl.damageP"></td></tr>
             <tr><th>Attack Speed Points</th><td>
