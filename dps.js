@@ -102,7 +102,7 @@ app.controller('Ctrl', function() {
   this.calcGraphData = function() {
     var crit = {key: 'Optimal DPS(+50% Crit Bonus)', values: []};
     var noCrit = {key: 'Optimal DPS', values: []};
-    for (var totalP = 0; totalP <= 60; totalP++) {
+    for (var totalP = 0; totalP <= 66; totalP++) {
       if (totalP >= 3) {
         crit.values.push({
           x: totalP,
